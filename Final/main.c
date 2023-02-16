@@ -32,8 +32,172 @@ typedef struct
     struct nodoArbol* der;
 }nodoArbol;
 
+nodoArbol* inicArbol();
+nodoArbol * crearNodoArbol(stRegistro dato);
+nodoArbol* insertar(nodoArbol* arbol,stRegistro dato);
+nodoArbol* alta(nodoArbol* arbol,stRegistro dato);
+nodoArbol * buscar(nodoArbol* arbol,int dato);
+nodoDeportista* inicLista();
+nodoDeportista* crearNodoLista(deportista dato);
+nodoDeportista* agregarPpio(nodoDeportista* lista,deportista dato);
+deportista transforma(stRegistro dato);
+
 int main()
 {
 
     return 0;
 }
+
+nodoArbol* inicArbol()
+{
+    return NULL;
+}
+nodoArbol * crearNodoArbol(stRegistro dato)
+{
+    nodoArbol* aux=(nodoArbol*)malloc(sizeof(nodoArbol));
+    strcpy(aux->deporte,dato.deporte);
+    aux->idDeporte=dato.idDeporte;
+    aux->listaDeportistas=inicLista();
+    aux->izq=NULL;
+    aux->der=NULL;
+    return aux;
+}
+nodoArbol* insertar(nodoArbol* arbol,stRegistro dato)
+{
+    if (arbol==NULL)
+        arbol=crearNodoArbol(dato);
+    else
+    {
+        if (dato.idDeporte>arbol->idDeporte)
+            arbol->der=insertar(arbol->der,dato);
+        else
+            arbol->izq=insertar(arbol->izq,dato);
+    }
+    return arbol;
+}
+nodoArbol* alta(nodoArbol* arbol,stRegistro dato)
+{
+    nodoArbol* aux=buscar(arbol,dato.idDeporte);
+    if (aux==NULL)
+    {
+        arbol=insertar(arbol,dato);
+    }
+    aux=buscar(arbol,dato.idDeporte);
+    aux->listaDeportistas=agregarPpio(aux->listaDeportistas,transforma(dato));
+    return arbol;
+}
+nodoArbol * buscar(nodoArbol* arbol,int dato)
+{
+    nodoArbol* rta=NULL;
+    if (arbol!=NULL)
+    {
+        if (dato==arbol->idDeporte)
+            rta=arbol;
+        else
+            if (dato>arbol->idDeporte)
+                rta=buscar(arbol->der,dato);
+            else
+                rta=buscar(arbol->izq,dato);
+    }
+    return rta;
+}
+
+nodoDeportista* inicLista()
+{
+    return NULL;
+}
+
+nodoDeportista* crearNodoLista(deportista dato)
+{
+    nodoDeportista * aux=(nodoDeportista*)malloc(sizeof(nodoDeportista));
+    aux->dato=dato;
+    aux->siguiente=NULL;
+    return aux;
+}
+nodoDeportista* agregarPpio(nodoDeportista* lista,deportista dato)
+{
+    nodoDeportista * nuevoNodo=crearNodoLista(dato);
+    if (lista!=NULL)
+    {
+        nuevoNodo->siguiente=lista;
+    }
+    lista=nuevoNodo;
+    return lista;
+}
+deportista transforma(stRegistro dato)
+{
+    deportista aux;
+    strcpy(aux.nombre,dato.nombre);
+    strcpy(aux.apellido,dato.apellido);
+    aux.edad=dato.edad;
+    return aux;
+}
+stRegistro crearRegistro()
+{
+    stRegistro aux;
+    printf("Ingrese Nombre\n");
+    fflush(stdin);
+    gets(aux.nombre);
+    printf("Ingrese Apellido\n");
+    fflush(stdin);
+    gets(aux.apellido);
+    printf("Ingrese Edad\n");
+    fflush(stdin);
+    scanf("%i",&aux.edad);
+    printf("Ingrese Deporte\n");
+    fflush(stdin);
+    gets(aux.deporte);
+    printf("Ingrese Id del Deporte\n");
+    fflush(stdin);
+    scanf("%i",&aux.idDeporte);
+    return aux;
+}
+void crearArchivo(char archivo[])
+{
+    FILE * archi=fopen(archivo,"ab");
+    int parar=0;
+    stRegistro aux;
+    while (parar==0)
+    {
+        aux=crearRegistro();
+        fwrite(&aux,sizeof(stRegistro),1,archi);
+        printf("Desea ingresar mas datos, ingrese 0 para continuar\n");
+        scanf("%i",&parar);
+    }
+    fclose(archi);
+}
+void leerArchivo(char archivo[])
+{
+    FILE * archi=fopen(archivo,"rb");
+    stRegistro aux;
+    while (!feof(archi))
+    {
+        fread(&aux,sizeof(stRegistro),1,archi);
+        if (!feof(archi))
+            mostrarRegistro(aux);
+    }
+    fclose(archi);
+}
+void mostrarRegistro(stRegistro dato)
+{
+    printf("--------------------------\n");
+    printf("Nombre: %s\n",dato.nombre);
+    printf("Apellido: %s\n",dato.apellido);
+    printf("Edad: %i\n",dato.edad);
+    printf("Deporte: %s\n",dato.deporte);
+    printf("Id del Deporte: %s\n",dato.deporte);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
