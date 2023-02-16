@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1676564582 source:c:\users\manuk\desktop\nueva carpeta\github\practicafinal\final\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+

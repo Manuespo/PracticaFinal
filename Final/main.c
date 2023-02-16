@@ -41,9 +41,17 @@ nodoDeportista* inicLista();
 nodoDeportista* crearNodoLista(deportista dato);
 nodoDeportista* agregarPpio(nodoDeportista* lista,deportista dato);
 deportista transforma(stRegistro dato);
+stRegistro crearRegistro();
+void crearArchivo(char archivo[]);
+void leerArchivo(char archivo[]);
+void mostrarRegistro(stRegistro dato);
 
 int main()
 {
+    nodoArbol* arbol=inicArbol();
+    //crearArchivo("hola.bin");
+    //leerArchivo("hola.bin");
+    arbol=pasarArchivoToArbol(arbol,"hola.bin");
 
     return 0;
 }
@@ -162,6 +170,7 @@ void crearArchivo(char archivo[])
         aux=crearRegistro();
         fwrite(&aux,sizeof(stRegistro),1,archi);
         printf("Desea ingresar mas datos, ingrese 0 para continuar\n");
+        fflush(stdin);
         scanf("%i",&parar);
     }
     fclose(archi);
@@ -185,7 +194,19 @@ void mostrarRegistro(stRegistro dato)
     printf("Apellido: %s\n",dato.apellido);
     printf("Edad: %i\n",dato.edad);
     printf("Deporte: %s\n",dato.deporte);
-    printf("Id del Deporte: %s\n",dato.deporte);
+    printf("Id del Deporte: %i\n",dato.idDeporte);
+}
+nodoArbol * pasarArchivoToArbol(nodoArbol* arbol,char archivo[])
+{
+    FILE * archi=fopen(archivo,"rb");
+    stRegistro aux;
+    while (!feof(archi))
+    {
+        fread(&aux,sizeof(stRegistro),1,archi);
+        if (!feof(archi))
+            arbol=alta(arbol,aux);
+    }
+    return arbol;
 }
 
 
