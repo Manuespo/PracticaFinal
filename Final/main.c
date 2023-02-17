@@ -45,13 +45,22 @@ stRegistro crearRegistro();
 void crearArchivo(char archivo[]);
 void leerArchivo(char archivo[]);
 void mostrarRegistro(stRegistro dato);
+nodoArbol * pasarArchivoToArbol(nodoArbol* arbol,char archivo[]);
+void inOrder(nodoArbol* arbol);
+void mostrarLista(nodoDeportista* lista);
+void crearArchivoLista(nodoDeportista* lista,char archivo[]);
+void pasarArboltoArchivo(nodoArbol* arbol);
+void leerArchivoLista(char archivo[]);
 
 int main()
 {
-    nodoArbol* arbol=inicArbol();
+    //nodoArbol* arbol=inicArbol();
     //crearArchivo("hola.bin");
     //leerArchivo("hola.bin");
-    arbol=pasarArchivoToArbol(arbol,"hola.bin");
+    //arbol=pasarArchivoToArbol(arbol,"hola.bin");
+    //inOrder(arbol);
+    //pasarArboltoArchivo(arbol);
+    leerArchivoLista("Handball.bin");
 
     return 0;
 }
@@ -208,7 +217,70 @@ nodoArbol * pasarArchivoToArbol(nodoArbol* arbol,char archivo[])
     }
     return arbol;
 }
-
+void inOrder(nodoArbol* arbol)
+{
+    if (arbol!=NULL)
+    {
+        inOrder(arbol->izq);
+        printf("-----------------------------\n");
+        printf("Deporte: %s\n",arbol->deporte);
+        printf("Id Deportista: %i\n",arbol->idDeporte);
+        mostrarLista(arbol->listaDeportistas);
+        inOrder(arbol->der);
+    }
+}
+void mostrarLista(nodoDeportista* lista)
+{
+    nodoDeportista* seg=lista;
+    while(seg!=NULL)
+    {
+        printf("---------------------------------\n");
+        printf("Nombre: %s\n",seg->dato.nombre);
+        printf("Apellido: %s\n",seg->dato.apellido);
+        printf("Edad: %i\n",seg->dato.edad);
+        seg=seg->siguiente;
+    }
+}
+void crearArchivoLista(nodoDeportista* lista,char archivo[])
+{
+    strcat(archivo,".bin");
+    FILE * archi=fopen(archivo,"ab");
+    deportista aux;
+    nodoDeportista* seg=lista;
+    while (seg!=NULL)
+    {
+        aux=seg->dato;
+        fwrite(&aux,sizeof(deportista),1,archi);
+        seg=seg->siguiente;
+    }
+    fclose(archi);
+}
+void pasarArboltoArchivo(nodoArbol* arbol)
+{
+    if (arbol!=NULL)
+    {
+        pasarArboltoArchivo(arbol->izq);
+        crearArchivoLista(arbol->listaDeportistas,arbol->deporte);
+        pasarArboltoArchivo(arbol->der);
+    }
+}
+void leerArchivoLista(char archivo[])
+{
+    FILE * archi=fopen(archivo,"rb");
+    deportista aux;
+    while (!feof(archi))
+    {
+        fread(&aux,sizeof(deportista),1,archi);
+        if (!feof(archi))
+        {
+            printf("---------------------------------\n");
+            printf("Nombre: %s\n",aux.nombre);
+            printf("Apellido: %s\n",aux.apellido);
+            printf("Edad: %i\n",aux.edad);
+        }
+    }
+    fclose(archi);
+}
 
 
 
